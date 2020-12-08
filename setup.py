@@ -13,8 +13,8 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/saradzhyanartur/liquidcss",
     packages=setuptools.find_packages(),
-    install_requires=['cssutils==1.0.2'],
-    setup_requires=['cssutils==1.0.2'],
+    install_requires=['cssutils==1.0.2', 'bs4==0.0.1'],
+    setup_requires=['cssutils==1.0.2', 'bs4==0.0.1'],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
