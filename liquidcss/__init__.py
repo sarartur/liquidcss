@@ -1,7 +1,6 @@
 from liquidcss.parsers import Css_Parser
 from liquidcss.selectors import SelectorManager
 from liquidcss.structure import StructureManager
-from liquidcss import config
 
 import os
 import sys
@@ -17,16 +16,19 @@ structure_manager = StructureManager(
 
 
 def rename_selectors(css_files, html_files):
-    structure_manager.create_structure()
+    structure_manager.validate_structure()
+
     for path in css_files:
         rules, sheet = parser.from_file(path = path)
+
+
         selector_manager.toggle_selector_names(selectors = rules)
-        parser.to_file(
-            sheet = sheet, 
-            path = os.path.join(
-                structure_manager.base_dir, 
-                'liquidcss_',
-                'css', 
-                os.path.basename(path)
-            )
+        structure_manager.create_file( 
+            type_ = 'css',
+            file_name = os.path.basename(path),
+            string = sheet.cssText,
         )
+
+    for path in html_files:
+        pass
+        

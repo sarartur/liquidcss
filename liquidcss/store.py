@@ -1,7 +1,7 @@
 class Storage(object):
 
     def __init__(self):
-        self.dict_ = dict()
+        self.map_ = dict()
 
     def matches_existing(self, string):
-        return self.dict_.get(string)
+        return self.map_.get(string)

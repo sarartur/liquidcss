@@ -31,7 +31,3 @@ class Css_Parser(object):
         return self.parse_css(css_string = css_string)
 
 
-    @staticmethod
-    def to_file(sheet, path):
-        with open(path, 'w') as file:
-            file.write(sheet.cssText.decode('ascii'))

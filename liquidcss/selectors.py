@@ -2,6 +2,7 @@ import uuid
 import re
 
 from liquidcss.store import Storage
+from liquidcss.re_utils import Replacement
 
 
 class SelectorManager(object):
@@ -20,19 +21,26 @@ class SelectorManager(object):
 
     def _generate_id(self, selector_string):
         existing = self.store.matches_existing(string = selector_string)
-        return existing if existing else self._generate_uuid()
+        if not existing:
+            selector_text = self._generate_uuid()
+        else:
+            selector_text = existing
+        return selector_text
 
 
     def toggle_selector_names(self, selectors):
         for selector in selectors:
-            selector.selectorText = re.sub(
+            repl = Replacement(replacement = r'\1{}', manager = self)
+            new_string = re.sub(
                 r"([.#])-?[_a-zA-Z]+[_a-zA-Z0-9-]*", 
-                r'\1{}'.format(
-                    self._generate_id(selector_string = selector.selectorText)
-                ), 
+                repl,
                 selector.selectorText
             )
-        return selectors
+            selector.selectorText = new_string
+            for matched, replaced in repl.occurrences:
+                self.store.map_[matched] = replaced[1:]
+            
 
+        
         
 
