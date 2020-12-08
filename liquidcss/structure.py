@@ -11,11 +11,11 @@ class StructureManager(object):
     )
 
 
-    def __init__(self, base_dir):
+    def __init__(self, base_dir: str):
         self.base_dir = base_dir
 
 
-    def _create_folder(self, folder_struct_key):
+    def _create_folder(self, folder_struct_key: str):
         os.mkdir(
             os.path.join(
                 self.base_dir, 
@@ -23,8 +23,9 @@ class StructureManager(object):
             )
         )
 
+
     @property
-    def _missing_key(self):
+    def _missing_key(self: str) -> str:
         for key, value in StructureManager.folder_struct.items():
             if os.path.isdir(os.path.join(self.base_dir, value)):
                 continue
@@ -32,7 +33,7 @@ class StructureManager(object):
                 return key
 
 
-    def create_file(self, type_, file_name, string):
+    def create_file(self, type_: str, file_name: str, string: str):
         path = os.path.join(self.base_dir, StructureManager.folder_struct[type_], file_name)
         with open(path, 'w') as file:
             file.write(string.decode('ascii'))
@@ -43,9 +44,6 @@ class StructureManager(object):
         if missing_key:
             self._create_folder(folder_struct_key = missing_key)
             self.validate_structure()
-        else:
-            return True
-            
 
 
 

@@ -12,7 +12,7 @@ class Css_Parser(object):
         pass
 
 
-    def parse_css(self, css_string):
+    def parse_css(self, css_string: str) -> (list, 'sheet'):
         css_rules = []
         sheet = cssutils.parseString(css_string)
         for rule in sheet:
@@ -24,7 +24,7 @@ class Css_Parser(object):
         return css_rules, sheet
 
 
-    def from_file(self, path):
+    def from_file(self, path: str) -> (list, 'sheet'):
         css_string = ''
         with open(path, 'r') as file:
             css_string = file.read()
