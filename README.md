@@ -3,7 +3,7 @@ Python package for altering CSS selector names across multiple files.
 ### Description & Implementation
 The package offers up a way to counteract targeted scraping by changing all CSS selector names across multiple files to unique identifiers. 
 ### Usage
-Create a python file of any name and place it in your working directory. For the sake of this example we will call the file ```liquify.py```. The ```liquidcss```` package offers one main function ```rename_selectors```. The function takes in a list of paths to the CSS files and a list of paths to the HTML files.
+Create a python file of any name and place it in your working directory. For the sake of this example we will call the file ```liquify.py```. The ```liquidcss``` package offers one main function ```rename_selectors```. The function takes in a list of paths to the CSS files and a list of paths to the HTML files.
  
 Contents of ```liquify.py``` file.
 ``` python
