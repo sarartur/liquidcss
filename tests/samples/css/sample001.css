@@ -1,0 +1,19 @@
+.apple {
+    padding: 20px;
+    background-color: black;
+}
+
+.orange {
+    padding: 20px;
+    background-color: orange;
+}
+
+.bannana {
+    padding: 20px;
+    background-color: green;
+}
+
+#pineapple {
+    padding: 20px;
+    background-color: red;
+}

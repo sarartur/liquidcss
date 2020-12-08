@@ -3,17 +3,19 @@ import os
 
 class StructureManager(object):
 
+    base_folder_name = 'liquidcss_'
     folder_struct = dict(
-        root_folder_path = os.path.join('liquidcss_'),
-        css = os.path.join('liquidcss_', 'css'),
-        html = os.path.join('liquidcss_', 'html'),
+        root_folder_path = os.path.join(base_folder_name),
+        css = os.path.join(base_folder_name, 'batch', 'css'),
+        html = os.path.join(base_folder_name, 'batch', 'html'),
+        mapping = os.path.join(base_folder_name, 'batch')
     )
 
     def __init__(self, base_dir: str):
         self.base_dir = base_dir
 
     def _create_folder(self, folder_struct_key: str):
-        os.mkdir(
+        os.makedirs(
             os.path.join(
                 self.base_dir, 
                 StructureManager.folder_struct[folder_struct_key]
@@ -31,7 +33,7 @@ class StructureManager(object):
     def create_file(self, type_: str, file_name: str, string: str):
         path = os.path.join(self.base_dir, StructureManager.folder_struct[type_], file_name)
         with open(path, 'w') as file:
-            file.write(string.decode('ascii'))
+            file.write(string)
 
     def validate_structure(self):
         missing_key = self._missing_key

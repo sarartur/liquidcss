@@ -1,21 +1,27 @@
 # LiquidCSS
-Python package for alterning css selector names and html templates across multiple files.
-## Description & Implementation
-Alters css selector names across css files and html templates.
-## Usage
-The package is currently under constructiom and has limited features.
-
+Python package for altering CSS selector names across multiple files.
+### Description & Implementation
+The package offers up a way to counteract targeted scraping by changing all CSS selector names across multiple files to unique identifiers. 
+### Usage
+Create a python file of any name and place it in your working directory. For the sake of this example we will call the file ```liquify.py```. The ```liquidcss```` package offers one main function ```rename_selectors```. The function takes in a list of paths to the CSS files and a list of paths to the HTML files.
+ 
 Contents of ```liquify.py``` file.
 ``` python
 import liquidcss
-
+ 
 liquidcss.rename_selectors(
     css_files = [
-        'css/sample001.css',
-        'css/sample002.css'
+        'tests/samples/css/sample001.css',
+        #'tests/samples/css/bootstrap.css'
     ],
-    html_files = None
+    html_files = [
+        'tests/samples/html/sample001.html',
+        #'tests/samples/html/bootstrap_template001.html'
+    ]
 )
 ```
-
+ 
 Execute the file with ```python liquify.py```
+ 
+The function will create a directory structure with the base folder ```liquidcss_``` inside the directory where the ```liquify.py``` file is located. Inside the directory structure the function will place copies of the specified CSS and HTML files with substituted selector names. The ```mapping.json``` file will include all substitution relationships.
+

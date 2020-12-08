@@ -1,17 +1,21 @@
 import os
 import sys
-import inspect
+import json
 
-from liquidcss.parsers import CssParser
+
+from liquidcss.parsers import CssParser, HtmlParser
 from liquidcss.selectors import SelectorManager
 from liquidcss.structure import StructureManager
 
 
-parser = CssParser()
 selector_manager = SelectorManager()
 structure_manager = StructureManager(
     base_dir = os.path.join(os.getcwd(), os.path.dirname(sys.argv[0]))
 )
+
+css_parser = CssParser()
+html_parser = HtmlParser(store = selector_manager.store)
+
 
 def rename_selectors(css_files: list, html_files: list) -> None:
     """
@@ -28,15 +32,27 @@ def rename_selectors(css_files: list, html_files: list) -> None:
     structure_manager.validate_structure()
 
     for path in css_files:
-        rules, sheet = parser.from_file(path = path)
+        rules, sheet = css_parser.from_file(path = path)
 
         selector_manager.toggle_selector_names(selectors = rules)
         structure_manager.create_file( 
             type_ = 'css',
             file_name = os.path.basename(path),
-            string = sheet.cssText,
+            string = sheet.cssText.decode('utf-8'),
         )
 
     for path in html_files:
-        pass
+        soup = html_parser.from_file(path = path)
+
+        structure_manager.create_file(
+            type_ = 'html',
+            file_name = os.path.basename(path),
+            string = str(soup),
+        )
+
+    structure_manager.create_file(
+        type_ = "mapping",
+        file_name = "mapping.json",
+        string = json.dumps(selector_manager.store)
+    )
         

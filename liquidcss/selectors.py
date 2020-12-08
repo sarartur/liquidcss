@@ -14,14 +14,14 @@ class SelectorManager(object):
         if not id_[0].isdigit():
             return id_
         else:
-            self._generate_uuid()
+            return self._generate_uuid()
 
     def _generate_id(self, selector_string: str) -> str:
         existing = self.store.get(selector_string)
         if not existing:
             selector_text = self._generate_uuid()
         else:
-            selector_text = existing
+            selector_text = existing[1:]
         return selector_text
 
     def toggle_selector_names(self, selectors: list):
@@ -34,7 +34,7 @@ class SelectorManager(object):
             )
             selector.selectorText = new_string
             for matched, replaced in repl.occurrences:
-                self.store[matched] = replaced[1:]
+                self.store[matched] = replaced
         
         
         
