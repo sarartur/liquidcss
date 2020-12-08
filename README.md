@@ -5,7 +5,7 @@ Alters css selector names across css files and html templates.
 ## Usage
 The package is currently under constructiom and has limited features.
 
-Contents of ```liquidcss.py``` file.
+Contents of ```liquify.py``` file.
 ``` python
 import liquidcss
 
@@ -18,4 +18,4 @@ liquidcss.rename_selectors(
 )
 ```
 
-Execute the file with ```python liquidcss.py```
+Execute the file with ```python liquify.py```
