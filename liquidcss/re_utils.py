@@ -3,12 +3,10 @@ from re import Match
 
 class Replacement(object):
 
-
     def __init__(self, replacement: str, manager):
         self.replacement = replacement
         self.manager = manager
         self.occurrences = []
-
 
     def __call__(self, match: Match):
         matched = match.group(0)

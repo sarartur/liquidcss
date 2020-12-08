@@ -11,7 +11,6 @@ class Css_Parser(object):
     def __init__(self):
         pass
 
-
     def parse_css(self, css_string: str) -> (list, 'sheet'):
         css_rules = []
         sheet = cssutils.parseString(css_string)
@@ -22,7 +21,6 @@ class Css_Parser(object):
             if isinstance(rule, CSSStyleRule):
                 css_rules.append(rule)
         return css_rules, sheet
-
 
     def from_file(self, path: str) -> (list, 'sheet'):
         css_string = ''

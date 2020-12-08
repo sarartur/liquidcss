@@ -7,13 +7,11 @@ from liquidcss.selectors import SelectorManager
 from liquidcss.structure import StructureManager
 
 
-
 parser = Css_Parser()
 selector_manager = SelectorManager()
 structure_manager = StructureManager(
     base_dir = os.path.join(os.getcwd(), os.path.dirname(sys.argv[0]))
 )
-
 
 def rename_selectors(css_files: list, html_files: list) -> None:
     """
@@ -26,7 +24,7 @@ def rename_selectors(css_files: list, html_files: list) -> None:
     :param css_files: the list of relative or absolute paths to the css files.
     :param html_files: the list of relative or absolute paths to the html files.
     """
-    
+
     structure_manager.validate_structure()
 
     for path in css_files:
