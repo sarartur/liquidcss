@@ -30,4 +30,5 @@ class CssParser(object):
 
 
 class HtmlParser(object):
+    """Parses HTML files"""
     pass
