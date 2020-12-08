@@ -9,13 +9,11 @@ from bs4 import BeautifulSoup
 
 class Parser(object):
 
-
     def from_file(self, path: str):
         string = ''
         with open(path, 'r') as file:
             string = file.read()
         return self.parse(string = string)
-
 
     def parse(self, string):
         """
@@ -23,7 +21,6 @@ class Parser(object):
         child class
         """
         pass
-
 
 
 class CssParser(Parser):
@@ -48,7 +45,6 @@ class HtmlParser(Parser):
     def __init__(self, store):
         self.store = store
 
-    
     def parse(self, string: str) -> BeautifulSoup:
         soup = BeautifulSoup(string, 'html.parser')
         for tag in soup.find_all():
