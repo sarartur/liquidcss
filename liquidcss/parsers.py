@@ -6,7 +6,7 @@ from cssutils.css import (
 )
 
 
-class Css_Parser(object):
+class CssParser(object):
 
     def __init__(self):
         pass
@@ -29,3 +29,5 @@ class Css_Parser(object):
         return self.parse_css(css_string = css_string)
 
 
+class HtmlParser(object):
+    pass

@@ -2,12 +2,12 @@ import os
 import sys
 import inspect
 
-from liquidcss.parsers import Css_Parser
+from liquidcss.parsers import CssParser
 from liquidcss.selectors import SelectorManager
 from liquidcss.structure import StructureManager
 
 
-parser = Css_Parser()
+parser = CssParser()
 selector_manager = SelectorManager()
 structure_manager = StructureManager(
     base_dir = os.path.join(os.getcwd(), os.path.dirname(sys.argv[0]))
