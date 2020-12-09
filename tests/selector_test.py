@@ -10,9 +10,7 @@ def test_generate_uuid(selector_manager):
     assert(isinstance(id_, str))
     assert(id_[0].isalpha())
     
-
-
-
+    
 if __name__ == "__main__":
     selector_manager = SelectorManager()
     test_generate_uuid(selector_manager)

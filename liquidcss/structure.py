@@ -3,12 +3,13 @@ import os
 
 class StructureManager(object):
 
-    base_folder_name = 'liquidcss_'
+    base_folder_name = 'liquified_'
     folder_struct = dict(
         root_folder_path = os.path.join(base_folder_name),
         css = os.path.join(base_folder_name, 'batch', 'css'),
         html = os.path.join(base_folder_name, 'batch', 'html'),
-        mapping = os.path.join(base_folder_name, 'batch')
+        js = os.path.join(base_folder_name, 'batch', 'js'),
+        mapping = os.path.join(base_folder_name, 'batch'),
     )
 
     def __init__(self, base_dir: str):

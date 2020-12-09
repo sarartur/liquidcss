@@ -10,7 +10,6 @@ def test_parse_from_file(parser):
     print(soup)
 
 
-
 if __name__ == "__main__":
     selector_manager = SelectorManager()
     parser = HtmlParser(store = selector_manager.store)

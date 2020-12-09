@@ -2,8 +2,11 @@ import os
 import sys
 import json
 
-
-from liquidcss.parsers import CssParser, HtmlParser
+from liquidcss.parsers import (
+    CssParser, 
+    HtmlParser,
+    JsParser,
+)
 from liquidcss.selectors import SelectorManager
 from liquidcss.structure import StructureManager
 
@@ -15,9 +18,10 @@ structure_manager = StructureManager(
 
 css_parser = CssParser()
 html_parser = HtmlParser()
+js_parser = JsParser()
 
 
-def rename_selectors(css_files: list, html_files: list) -> None:
+def rename_selectors(css_files: list, html_files: list, js_files: list) -> None:
     """
     **Ranames all CSS Selector**
 
@@ -27,13 +31,13 @@ def rename_selectors(css_files: list, html_files: list) -> None:
 
     :param css_files: the list of relative or absolute paths to the css files.
     :param html_files: the list of relative or absolute paths to the html files.
+    :param js_files: the list of relative or absolute paths to the js files.
     """
 
     structure_manager.validate_structure()
 
     for path in css_files:
         rules, sheet = css_parser.from_file(path = path)
-
         selector_manager.toggle_selector_names(objects = rules)
         structure_manager.create_file( 
             type_ = 'css',
@@ -43,12 +47,21 @@ def rename_selectors(css_files: list, html_files: list) -> None:
 
     for path in html_files:
         tags, soup = html_parser.from_file(path = path)
-
         selector_manager.toggle_selector_names(objects = tags)
         structure_manager.create_file(
             type_ = 'html',
             file_name = os.path.basename(path),
             string = str(soup),
+        )
+
+    for path in js_files:
+        identifiers, script_string = js_parser.from_file(path = path)
+        selector_manager.toggle_selector_names(objects = identifiers)
+
+        structure_manager.create_file(
+            type_ = 'js',
+            file_name = os.path.basename(path),
+            string = script_string.format(*[identifier.value for identifier in identifiers])
         )
 
     structure_manager.create_file(

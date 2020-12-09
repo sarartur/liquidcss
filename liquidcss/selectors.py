@@ -2,6 +2,7 @@ import uuid
 import re
 from cssutils.css import CSSStyleRule
 from bs4.element import Tag
+from esprima.nodes import Literal, Script
 
 from liquidcss.re_utils import Replacement
 
@@ -31,6 +32,8 @@ class SelectorManager(object):
             self._toggle_in_css(rules = objects)
         if all(isinstance(object_, Tag) for object_ in objects):
             self._toggle_in_html(tags = objects)
+        if all(isinstance(object_, Literal) for object_ in objects):
+            self._toggle_in_js(identifiers = objects)
         
     def _toggle_in_css(self, rules):
         for selector in rules:
@@ -67,3 +70,11 @@ class SelectorManager(object):
                     replacment = id_
                 tag['id'] = replacment
 
+    def _toggle_in_js(self, identifiers):
+        for identifier in identifiers:
+            replacement = self.store.get(identifier.value)
+            if replacement:
+                replacement = replacement
+            else:
+                replacement = identifier.value 
+            identifier.value = replacement

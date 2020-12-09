@@ -1,10 +1,16 @@
 import cssutils
 from cssutils.css import (
-    CSSRule, 
     CSSStyleRule,
     CSSMediaRule,
 )
 from bs4 import BeautifulSoup
+from esprima import parseScript
+from esprima.nodes import (
+    VariableDeclaration,
+    VariableDeclarator,
+    Literal,
+)
+
 
 
 class Parser(object):
@@ -49,3 +55,31 @@ class HtmlParser(Parser):
         soup = BeautifulSoup(string, 'html.parser')
         tags = soup.find_all()
         return tags, soup
+
+
+class JsParser(Parser):
+
+    def __init__(self):
+        pass
+
+    def parse(self, string):
+        script = parseScript(string)
+        identifiers = []
+        string_body = """"""
+        for variable_declaration in script.body:
+            if not isinstance(variable_declaration, VariableDeclaration):
+                continue
+            for declaration in variable_declaration.declarations:
+                #print(declaration)
+                if not isinstance(declaration, VariableDeclarator):
+                    continue
+                identifier = declaration.init
+                if not isinstance(identifier, Literal):
+                    continue
+                identifiers.append(identifier)
+                string_body += f"{variable_declaration.kind} {declaration.id.name} = " + "\"{}\"\n"
+        return identifiers, string_body
+
+
+
+

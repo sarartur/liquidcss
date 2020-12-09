@@ -2,3 +2,4 @@ beautifulsoup4==4.9.3
 bs4==0.0.1
 cssutils==1.0.2
 soupsieve==2.0.1
+esprima==4.0.1
