@@ -42,31 +42,10 @@ class CssParser(Parser):
 
 class HtmlParser(Parser):
 
-    def __init__(self, store):
-        self.store = store
+    def __init__(self):
+        pass
 
     def parse(self, string: str) -> BeautifulSoup:
         soup = BeautifulSoup(string, 'html.parser')
-        for tag in soup.find_all():
-            classes = tag.get('class')
-            if classes:
-                new_classes = []
-                for class_ in classes:
-                    replacment = self.store.get(f".{class_}")
-                    if replacment:
-                        replacment = replacment[1:]
-                    else:
-                        replacment = class_
-                    new_classes.append(replacment)
-                tag['class'] = new_classes
-
-            id_ = tag.get('id')
-            if id_:
-                replacment = self.store.get(f"#{id_}")
-                if replacment:
-                    replacment = replacment[1:]
-                else:
-                    replacment = id_
-                tag['id'] = replacment
-                
-        return soup
+        tags = soup.find_all()
+        return tags, soup

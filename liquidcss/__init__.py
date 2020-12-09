@@ -14,7 +14,7 @@ structure_manager = StructureManager(
 )
 
 css_parser = CssParser()
-html_parser = HtmlParser(store = selector_manager.store)
+html_parser = HtmlParser()
 
 
 def rename_selectors(css_files: list, html_files: list) -> None:
@@ -34,7 +34,7 @@ def rename_selectors(css_files: list, html_files: list) -> None:
     for path in css_files:
         rules, sheet = css_parser.from_file(path = path)
 
-        selector_manager.toggle_selector_names(selectors = rules)
+        selector_manager.toggle_selector_names(objects = rules)
         structure_manager.create_file( 
             type_ = 'css',
             file_name = os.path.basename(path),
@@ -42,8 +42,9 @@ def rename_selectors(css_files: list, html_files: list) -> None:
         )
 
     for path in html_files:
-        soup = html_parser.from_file(path = path)
+        tags, soup = html_parser.from_file(path = path)
 
+        selector_manager.toggle_selector_names(objects = tags)
         structure_manager.create_file(
             type_ = 'html',
             file_name = os.path.basename(path),
