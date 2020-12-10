@@ -5,13 +5,13 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="liquidcss", 
-    version="0.3.2",
+    version="0.3.3",
     author="Artur Saradzhyan",
     author_email="saradzhyanartur@gmail.com",
     description="Alters css selector names across css files and html templates.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/saradzhyanartur/liquidcss",
+    url="https://github.com/sarartur/liquidcss",
     packages=setuptools.find_packages(),
     install_requires=['cssutils==1.0.2', 'bs4==0.0.1', "esprima==4.0.1"],
     setup_requires=['cssutils==1.0.2', 'bs4==0.0.1', "esprima==4.0.1"],
