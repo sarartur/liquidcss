@@ -11,7 +11,15 @@ from esprima.nodes import (
     Literal,
 )
 
+class Document(object):
 
+    def __init__(self, to_string_method):
+        self.to_string_method = to_string_method
+        self.obj = None
+        self.selector_objs = []
+
+    def to_string(self):
+        return self.to_string_method()
 
 class Parser(object):
 
@@ -29,21 +37,28 @@ class Parser(object):
         pass
 
 
+    def _to_string(self):
+        """
+        Method has to be overwritten from 
+        child class
+        """
+        pass
+
 class CssParser(Parser):
 
     def __init__(self):
         pass
 
     def parse(self, string: str) -> (list, 'sheet'):
-        css_rules = []
-        sheet = cssutils.parseString(string)
-        for rule in sheet:
+        document = Document(to_string_method = self._to_string)
+        document.obj = cssutils.parseString(string)
+        for rule in document.obj:
             if isinstance(rule, CSSMediaRule):
                 rules = rule.cssRules
-                css_rules = [*css_rules, *rules]
+                document.selector_objs = [*document.selector_objs, *rules]
             if isinstance(rule, CSSStyleRule):
-                css_rules.append(rule)
-        return css_rules, sheet
+                document.selector_objs.append(rule)
+        return document
 
 
 class HtmlParser(Parser):
@@ -52,9 +67,10 @@ class HtmlParser(Parser):
         pass
 
     def parse(self, string: str) -> BeautifulSoup:
-        soup = BeautifulSoup(string, 'html.parser')
-        tags = soup.find_all()
-        return tags, soup
+        document = Document(to_string_method = self._to_string)
+        document.obj = BeautifulSoup(string, 'html.parser')
+        document.selector_objs = document.obj.find_all()
+        return document
 
 
 class JsParser(Parser):
@@ -63,9 +79,8 @@ class JsParser(Parser):
         pass
 
     def parse(self, string):
+        document = Document(to_string_method = self._to_string)
         script = parseScript(string)
-        identifiers = []
-        string_body = """"""
         for variable_declaration in script.body:
             if not isinstance(variable_declaration, VariableDeclaration):
                 continue
@@ -76,10 +91,6 @@ class JsParser(Parser):
                 identifier = declaration.init
                 if not isinstance(identifier, Literal):
                     continue
-                identifiers.append(identifier)
-                string_body += f"{variable_declaration.kind} {declaration.id.name} = " + "\"{}\"\n"
-        return identifiers, string_body
-
-
-
-
+                document.selector_objs.append(identifier)
+                document.obj += f"{variable_declaration.kind} {declaration.id.name} = " + "\"{}\"\n"
+        return document
