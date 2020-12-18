@@ -4,13 +4,10 @@ from cssutils.css import CSSStyleRule
 from bs4.element import Tag
 from esprima.nodes import Literal, Script
 
-from liquidcss.re_utils import Replacement
+class Stager(object):
 
-
-class SelectorManager(object):
-
-    def __init__(self):
-        self.store = dict()
+    def __init__(self, selector_map):
+        self.store = selector_map
 
     def _generate_uuid(self):
         id_ = str(uuid.uuid4())
@@ -78,3 +75,18 @@ class SelectorManager(object):
             else:
                 replacement = identifier.value 
             identifier.value = replacement
+
+class Replacement(object):
+
+    def __init__(self, replacement: str, manager):
+        self.replacement = replacement
+        self.manager = manager
+        self.occurrences = []
+
+    def __call__(self, match: re.Match):
+        matched = match.group(0)
+        replaced = match.expand(
+            self.replacement
+        ).format(self.manager._generate_id(matched))
+        self.occurrences.append((matched, replaced))
+        return replaced

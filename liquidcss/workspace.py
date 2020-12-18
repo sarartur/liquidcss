@@ -4,7 +4,7 @@ import json
 from collections import OrderedDict
 
 from liquidcss.settings import Settings
-from liquidcss.utils import create_file_id, create_file_hash
+from liquidcss.utils import create_file_key, create_file_hash
 
 
 class Structure(object):
@@ -19,8 +19,8 @@ class Structure(object):
         self.src = Folder(
             path = os.path.join(base_dir, self.base_folder_name, 'files', 'src')
         )
-        self.hashed = Folder(
-            path = os.path.join(base_dir, self.base_folder_name, 'files', 'hashed')
+        self.staged = Folder(
+            path = os.path.join(base_dir, self.base_folder_name, 'files', 'staged')
         )
         self.bak = Folder(
             path = os.path.join(base_dir, self.base_folder_name, 'files', '.bak')
@@ -57,14 +57,9 @@ class WorkSpace(Structure):
 
     @property
     def files_deployed(self):
-        file_map = self.file_map
         return tuple(
-            mapping['id'] for mapping in file_map.content if mapping['deployed'] == True
+            mapping['id'] for mapping in self.file_map.content.values() if mapping['deployed'] == True
         )
-
-    def touch_base_folder(self):
-        if os.path.isdir(self.base_folder_name):
-            return True
         
     def init(self):
         for folder in self.folders:
@@ -92,16 +87,19 @@ class WorkSpace(Structure):
                 return False
         return True
 
-    def register(self, path, file_id):
+    def register(self, path, file_key, type_):
         self._copy(src = path, trgt = os.path.join(self.src.path, os.path.basename(path)))
         _content = self.file_map.content
-        _content.update({file_id : {
+        _content.update({file_key : {
             "path": path, "staged": False, "deployed": False,
             "hash": create_file_hash(
                 path = os.path.join(self.src.path, os.path.basename(path))
-            )
+            ), "type": type_, 'name': os.path.basename(path)
         }})
         self.file_map.content = _content
+
+    def copy(self, src, trgt):
+        self._copy(src = src, trgt = trgt)
 
     def _copy(self, src, trgt):
         shutil.copyfile(src, trgt)
@@ -129,27 +127,40 @@ class File(object):
     
     def __init__(self, path, default):
         self.path = path
-        self.default = default
+        self._default = default
+        self._cached = None
 
     @property
     def content(self):
+        if self._cached:
+            return self._cached
         _content = self._read()
-        return _content if _content else json.loads(self.default)
+        self._cached = _content
+        return _content if _content else json.loads(
+            self._default, object_pairs_hook = OrderedDict
+        )
 
     @content.setter
     def content(self, dict_):
+        self._assign_num_ids(dict_ = dict_)
         self._write(dict_ = dict_)
+        self._cached = dict_
 
     @property
-    def existis(self):
+    def exists(self):
         return os.path.isfile(self.path)
 
+    def _assign_num_ids(self, dict_):
+        for i, value in enumerate(dict_.values()):
+            value["id"] = i
+
     def _read(self):
-        if not self.existis:
+        if not self.exists:
             return None
         with open(self.path, 'r') as file:
-            return json.load(file)
+            return json.load(file, object_pairs_hook = OrderedDict)
 
     def _write(self, dict_):
         with open(self.path, 'w') as file:
             json.dump(dict_, file)
+

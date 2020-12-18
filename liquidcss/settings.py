@@ -7,20 +7,29 @@ class Settings(object):
         "html_ext": ["html"]
     }
 
-    def __init__(self, workspace):
+    def __init__(self, workspace = None):
+
+        self.type_priority = [
+            'css', 'html', 'js'
+        ]
+
+        #All possible attributes that can registered.
         self.reset = False
         self.hard = False
         self.over = False
+        self.no_hash = False
+        self.all = False
         self.css_ext = list()
         self.js_ext = list()
         self.html_ext = list()
         
-        self.update_from_dict(
+        self.register_from_kwargs(
             **workspace.settings.content
         )
 
-    def update_from_argparse(self, args):
-        self.update_from_dict(**vars(args))
-
-    def update_from_dict(self, **kwargs):
+    def register_from_kwargs(self, **kwargs):
         self.__dict__.update(**kwargs)
+
+    @property
+    def extensions(self):
+        return {key: value for key, value in  self.__dict__.items() if key.endswith('_ext')}

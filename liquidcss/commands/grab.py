@@ -3,7 +3,7 @@ import os
 
 from liquidcss.workspace import WorkSpace
 from liquidcss.settings import Settings
-from liquidcss.utils import create_file_id
+from liquidcss.utils import create_file_key
 
 """
 Command: liquidcss grab
@@ -29,16 +29,21 @@ def _read_in_txt(path):
 def grab(paths):
     file_map = workspace.file_map.content
     for path in paths:
-        file_id = create_file_id(path)
+        file_key = create_file_key(path)
         if not settings.over:
-            if file_map.get(file_id):
+            if file_map.get(file_key):
                 raise Exception("A file with that path is already registered.")
-        workspace.register(path = path, file_id = file_id)
+        ext = os.path.basename(path).split('.')[-1]
+        type_ = next((key for key, value in settings.extensions if ext in value), None)
+        if not type_:
+            raise Exception("File with unknown extension")
+        try: workspace.register(path = path, file_key = file_key, type_ = type_.split('_')[0])
+        except FileNotFoundError: raise Exception(f"File not found at {path}.")
 
 def main(args):
     parser = argparse.ArgumentParser(
         prog="liquid grab",
-        description="adds files to the workspace",
+        description="Used to intially add files to the workspace. ",
     )
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
@@ -56,5 +61,5 @@ def main(args):
     )
     parsed_args = parser.parse_args(args)
     paths =  _read_in_txt(parsed_args.read) if parsed_args.read else [parsed_args.file, ],
-    settings.update_from_argparse(args = parsed_args)
+    settings.register_from_kwargs(args = parsed_args)
     grab(paths = paths)

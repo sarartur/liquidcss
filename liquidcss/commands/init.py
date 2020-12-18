@@ -63,7 +63,7 @@ def main(args):
     parsed_args = parser.parse_args(args)
     if parsed_args.hard and not parsed_args.reset:
         parser.error("[--hard] can not be passed in without [--reset -r]")
-    settings.update_from_argparse(args = parsed_args)
+    settings.register_from_kwargs(**vars(parsed_args))
 
     msg = init()
     print(msg)

@@ -2,7 +2,7 @@ import os
 from hashlib import sha256
 
 
-def create_file_id(path):
+def create_file_key(path):
     components = path.split(os.sep)
     return "~".join(components)
 
