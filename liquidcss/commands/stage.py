@@ -28,8 +28,8 @@ workspace = WorkSpace(base_dir = os.getcwd())
 settings = Settings(workspace = workspace)
 
 def stage(file_ids):
-    stager = Stager(selector_map = workspace.selector_map)
-    file_map = workspace.file_map.conent
+    stager = Stager(selector_map = workspace.selector_map.content)
+    file_map = workspace.file_map.content
     for id_ in sorted(file_ids, key = lambda id_: settings.type_priority.index(next(
         value['type'] for value in file_map.values() if value["id"] == id_
     ))):
@@ -37,17 +37,17 @@ def stage(file_ids):
             (key, value) for key, value in file_map.items() if value["id"] == id_
         )
         if create_file_hash(
-            path = os.path.join(workspace.src, dict_["path"])
+            path = os.path.join(workspace.src.path, file_key)
         ) != dict_['hash']:
             Exception("The file has been changed after it was registered by the work space.")
         parser = create_parser(type_ = dict_['type'])
-        document = parser.from_file(path = os.path.join(workspace.src, dict_["path"]))
+        document = parser.from_file(path = os.path.join(workspace.src.path, file_key))
         if not settings.no_hash:
             stager.toggle_selector_names(objects = document.selectors)
         file_map[file_key]['staged'] = True
         workspace.file_map.content = file_map
         workspace.create_file(
-            path = os.path.join(workspace.staged, dict_['path']), 
+            path = os.path.join(workspace.staged.path, file_key), 
             string = document.to_string()
         )
 
@@ -75,7 +75,7 @@ def main(args):
     parsed_args = parser.parse_args(args)
     settings.register_from_kwargs(**vars(parsed_args))
     file_ids = tuple(
-        dict_['id'] for dict_ in workspace.file_map.content.vaules()
+        dict_['id'] for dict_ in workspace.file_map.content.values()
     ) if settings.all else tuple(parsed_args.file_id, )
     stage(file_ids)
     

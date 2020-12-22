@@ -19,6 +19,7 @@ class Settings(object):
         self.over = False
         self.no_hash = False
         self.all = False
+        self.reverse = False
         self.css_ext = list()
         self.js_ext = list()
         self.html_ext = list()

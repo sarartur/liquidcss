@@ -88,12 +88,11 @@ class WorkSpace(Structure):
         return True
 
     def register(self, path, file_key, type_):
-        self._copy(src = path, trgt = os.path.join(self.src.path, os.path.basename(path)))
         _content = self.file_map.content
         _content.update({file_key : {
             "path": path, "staged": False, "deployed": False,
             "hash": create_file_hash(
-                path = os.path.join(self.src.path, os.path.basename(path))
+                path = os.path.join(self.src.path, file_key)
             ), "type": type_, 'name': os.path.basename(path)
         }})
         self.file_map.content = _content
@@ -127,7 +126,7 @@ class File(object):
     
     def __init__(self, path, default):
         self.path = path
-        self._default = default
+        self.default = default
         self._cached = None
 
     @property
@@ -137,7 +136,7 @@ class File(object):
         _content = self._read()
         self._cached = _content
         return _content if _content else json.loads(
-            self._default, object_pairs_hook = OrderedDict
+            self.default, object_pairs_hook = OrderedDict
         )
 
     @content.setter

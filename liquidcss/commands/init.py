@@ -2,12 +2,13 @@ import argparse
 import os
 
 from liquidcss.workspace import WorkSpace
+from liquidcss.settings import Settings
 from liquidcss.msgs import (
     files_are_deployed_msg, workspace_exists_msg,
     hard_reset_warning_msg, succesful_init_msg, 
     succesful_reset_msg, reset_cancled, workspace_does_not_exist
 )
-from liquidcss.settings import Settings
+
 
 """
 Command: liquidcss init

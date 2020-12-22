@@ -42,7 +42,7 @@ class CssParser(Parser):
         for rule in document.obj:
             if isinstance(rule, CSSMediaRule):
                 rules = rule.cssRules
-                document.selector_objs = [*document.selector_objs, *rules]
+                document.selectors = [*document.selectors, *rules]
             if isinstance(rule, CSSStyleRule):
                 document.selectors.append(rule)
         return document
@@ -77,6 +77,7 @@ class JsParser(Parser):
 
     def parse(self, string):
         document = Document(to_string_method = self._doc_to_string_method)
+        document.obj = """"""
         script = parseScript(string)
         for variable_declaration in script.body:
             if not isinstance(variable_declaration, VariableDeclaration):

@@ -21,7 +21,6 @@ setuptools.setup(
             'grab = liquidcss.commands.grab:main',
             'init = liquidcss.commands.init:main',
             'deploy = liquidcss.commands.deploy:main',
-            'revert = liquidcss.commands.revert:main',
             'stage = liquidcss.commands.stage:main',
             'drop = liquidcss.commands.drop:main',
         ]         
