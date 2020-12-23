@@ -23,6 +23,7 @@ setuptools.setup(
             'deploy = liquidcss.commands.deploy:main',
             'stage = liquidcss.commands.stage:main',
             'drop = liquidcss.commands.drop:main',
+            'status = liquidcss.commands.status:main'
         ]         
     },
     install_requires=['cssutils==1.0.2', 'bs4==0.0.1', "esprima==4.0.1"],

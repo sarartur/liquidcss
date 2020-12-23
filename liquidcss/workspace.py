@@ -25,7 +25,7 @@ class Structure(object):
         self.bak = Folder(
             path = os.path.join(base_dir, self.base_folder_name, 'files', '.bak')
         )
-        self.file_map = File(
+        self.file_map = Registration(
             path = os.path.join(base_dir, self.base_folder_name, 'fileMap.json'),
             default = r"{}"
         ) 
@@ -76,7 +76,8 @@ class WorkSpace(Structure):
         
     def remove_files(self, paths):
         for path in paths:
-            self._remove_file(path = path)
+            try: self._remove_file(path = path)
+            except FileNotFoundError: pass
 
     def create_file(self, path, string):
         self._create_file(path = path, string = string)
@@ -90,7 +91,8 @@ class WorkSpace(Structure):
     def register(self, path, file_key, type_):
         _content = self.file_map.content
         _content.update({file_key : {
-            "path": path, "staged": False, "deployed": False,
+            "path": os.path.join(self.base_dir, path), 
+            "staged": False, "deployed": False,
             "hash": create_file_hash(
                 path = os.path.join(self.src.path, file_key)
             ), "type": type_, 'name': os.path.basename(path)
@@ -127,31 +129,25 @@ class File(object):
     def __init__(self, path, default):
         self.path = path
         self.default = default
-        self._cached = None
+        self._content = None
 
     @property
     def content(self):
-        if self._cached:
-            return self._cached
-        _content = self._read()
-        self._cached = _content
-        return _content if _content else json.loads(
+        if self._content:
+            return self._content
+        self._content = self._read()
+        return self._content if self._content else json.loads(
             self.default, object_pairs_hook = OrderedDict
         )
 
     @content.setter
     def content(self, dict_):
-        self._assign_num_ids(dict_ = dict_)
         self._write(dict_ = dict_)
-        self._cached = dict_
+        self._content = dict_
 
     @property
     def exists(self):
         return os.path.isfile(self.path)
-
-    def _assign_num_ids(self, dict_):
-        for i, value in enumerate(dict_.values()):
-            value["id"] = i
 
     def _read(self):
         if not self.exists:
@@ -163,3 +159,26 @@ class File(object):
         with open(self.path, 'w') as file:
             json.dump(dict_, file)
 
+class Registration(File):
+
+    def __init__(self, path, default):
+        File.__init__(self, path = path, default = default)
+
+    @property
+    def content(self):
+        return File.content.fget(self)
+
+    @content.setter
+    def content(self, dict_):
+        self._assign_num_ids(dict_ = dict_)
+        File.content.fset(self, dict_)
+
+    def _assign_num_ids(self, dict_):
+        for i, value in enumerate(dict_.values()):
+            value["id"] = str(i)
+
+    def key_and_settings_from_id(self, id_):
+        file_key, file_settings = next((
+            (key, value) for key, value in self.content.items() if value["id"] == id_
+        ), (None, None))
+        return file_key, file_settings

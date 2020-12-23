@@ -1,33 +1,33 @@
-.aee207d5-8ba6-4b7e-86d3-3e8d4494bc4c {
+.e60c6a0c-5ff6-4ed4-b66a-bae1fa5e4872 {
     padding: 20px;
     background-color: green
     }
-.a7a75cde-ed7a-4c36-9189-911b08aa6bee {
+.b512139e-0ab1-4fe3-b7ff-e312e7937c11 {
     padding: 20px;
     background-color: orange
     }
-.d3644918-32c2-408c-aed2-e1720d19ad08 {
+.dc26704c-1f2f-4c38-8558-5abfb48c9ddb {
     padding: 20px;
     background-color: yellow
     }
-.aee207d5-8ba6-4b7e-86d3-3e8d4494bc4c .a7a75cde-ed7a-4c36-9189-911b08aa6bee {
+.e60c6a0c-5ff6-4ed4-b66a-bae1fa5e4872 .b512139e-0ab1-4fe3-b7ff-e312e7937c11 {
     padding: 20px;
     background-color: black
     }
-#a5cb8fdd-b6b4-4136-b333-1d655b58a4c2 {
+#cc08e533-fef4-4f75-b6c8-793f09698201 {
     padding: 20px;
     background-color: lightcoral
     }
 @media (max-width: 600px) {
-    .d3644918-32c2-408c-aed2-e1720d19ad08 {
+    .dc26704c-1f2f-4c38-8558-5abfb48c9ddb {
         padding: 40px
         }
     }
-#a43b9ada-66eb-42e1-a5e7-519998f66c26 {
+#db65fab0-ff0c-4dbc-b421-59ef19dc9f0b {
     padding: 20px;
     background-color: red
     }
-.fdadd532-ed41-49ac-9327-d37c6d0f8bfd {
+.cd4a0e44-5bdb-48f0-b075-ec12fdfe0d19 {
     padding: 20px;
     background-color: blue
     }

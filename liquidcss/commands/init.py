@@ -2,23 +2,17 @@ import argparse
 import os
 
 from liquidcss.workspace import WorkSpace
-from liquidcss.settings import Settings
-from liquidcss.msgs import (
-    files_are_deployed_msg, workspace_exists_msg,
-    hard_reset_warning_msg, succesful_init_msg, 
-    succesful_reset_msg, reset_cancled, workspace_does_not_exist
-)
-
+from liquidcss.settings import Settings, Messages
 
 """
 Command: liquidcss init
 
 Description:
-    Intializes the workspace.
+    Initializes the WorkSpace.
 
 Optional Arguments:
-    [--reset -r] - resets the work space. The reset will be blocked if there are files deployed.
-    [--hard] - resets the work space.
+    [--reset -r] : Resets the WorkSpace.
+    [--hard, -hr] : Resets the WorkSpace even if files are deployed.
 """
 
 workspace = WorkSpace(base_dir = os.getcwd())
@@ -27,46 +21,44 @@ settings = Settings(workspace = workspace)
 def init():
     if not settings.reset:
         if workspace.base.exists:
-            raise Exception(workspace_exists_msg)
+            raise Exception(Messages.workspace_exists)
         workspace.init()
-        return succesful_init_msg
+        return
     if not workspace.base.exists:
-        raise Exception(workspace_does_not_exist)
+        raise Exception(Messages.workspace_does_not_exist)
     if not settings.hard:
         deployed = workspace.files_deployed
         if deployed:
-            raise Exception(files_are_deployed_msg.format(deployed))
+            raise Exception(Messages.files_are_deployed.format(deployed))
         workspace.reset()
-        return succesful_reset_msg
+        return
     else:
-        print(hard_reset_warning_msg.format(workspace.bak.path))
+        print(Messages.hard_reset_warning.format(workspace.bak.path))
         user_input = input().strip().lower().startswith('y')
         if user_input:
             workspace.reset()
-            return succesful_reset_msg
-        raise Exception(reset_cancled)
+            return
+        raise Exception(Messages.reset_cancled)
 
 def main(args):
     parser = argparse.ArgumentParser(
         prog="liquid init",
-        description="initializes or resets the works space",
+        description="Initializes the WorkSpace.",
     )
     parser.add_argument(
         "--reset", "-r",
         action='store_true',
-        help="Resets the work space. The reset will be blocked if there are files deployed.",
+        help="Resets the WorkSpace.",
     )
     parser.add_argument(
-        "--hard",
+        "--hard", "-hr",
         action='store_true',
-        help="Bypasses the default block on --reset",
+        help="Resets the WorkSpace even if files are deployed.",
     )
     parsed_args = parser.parse_args(args)
     if parsed_args.hard and not parsed_args.reset:
         parser.error("[--hard] can not be passed in without [--reset -r]")
     settings.register_from_kwargs(**vars(parsed_args))
-
-    msg = init()
-    print(msg)
+    init()
 
     

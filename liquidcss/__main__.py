@@ -2,8 +2,8 @@ import sys
 
 import liquidcss.cli as cli
 
-#Removetraceback if program is through CLI
-sys.tracebacklimit = 0
+#remove if program is through CLI
+#sys.tracebacklimit = 0
 
 def main(argv):
     cli.dispatch(argv = argv)

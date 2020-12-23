@@ -1,0 +1,40 @@
+.apple {
+    padding: 20px;
+    background-color: green;
+}
+
+.orange {
+    padding: 20px;
+    background-color: orange;
+}
+
+.banana {
+    padding: 20px;
+    background-color: yellow;
+}
+
+.apple .orange{
+    padding: 20px;
+    background-color: black;
+}
+
+#pineapple {
+    padding: 20px;
+    background-color: lightcoral;
+}
+
+@media (max-width: 600px) {
+    .banana {
+        padding: 40px
+    }
+}
+
+#strawberry {
+    padding: 20px;
+    background-color: red;
+}
+
+.blueberry {
+    padding: 20px;
+    background-color: blue;
+}

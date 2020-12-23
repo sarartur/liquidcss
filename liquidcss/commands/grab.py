@@ -2,21 +2,21 @@ import argparse
 import os
 
 from liquidcss.workspace import WorkSpace
-from liquidcss.settings import Settings
+from liquidcss.settings import Settings, Messages
 from liquidcss.utils import create_file_key
 
 """
 Command: liquidcss grab
 
 Description:
-    Used to intially add files to the workspace. 
+    Registers files with the WorkSpace. 
 
-Positional Arguments:{file_path}
-    {file_path} - the path to the file to be grabbed.
+Positional Arguments : {path}
+    {path} : The path to the file.
 
 Flags:
-    [-o --over] : overwrites a file.
-    [-r --read] : reads in a txt file of paths.
+    [-o --over] : Overwrites a registered file with the matching path.
+    [-r --read] : Reads in a txt file containing paths.
 """
 
 workspace = WorkSpace(base_dir = os.getcwd())
@@ -32,34 +32,34 @@ def grab(paths):
         file_key = create_file_key(path)
         if not settings.over:
             if file_map.get(file_key):
-                raise Exception("A file with that path is already registered.")
+                raise Exception(Messages.path_already_registered.format(path = path))
         ext = os.path.basename(path).split('.')[-1]
         type_ = next((key.split('_')[0] for key, value in settings.extensions.items() if ext in value), None)
         if not type_:
-            raise Exception("File with unknown extension")
+            raise Exception(Messages.unkown_extension)
         try: workspace.copy(src = path, trgt = os.path.join(workspace.src.path, file_key))
-        except FileNotFoundError: raise Exception(f"File not found at {path}.")
+        except FileNotFoundError: raise Exception(Messages.file_not_found.format(path = path))
         workspace.register(path = path, file_key = file_key, type_ = type_)
 
 def main(args):
     parser = argparse.ArgumentParser(
         prog="liquid grab",
-        description="Used to intially add files to the workspace. ",
+        description="Registers files with the workspace.",
     )
     group = parser.add_mutually_exclusive_group(required = True)
     group.add_argument(
         'file',
         nargs = "?",
-        help = "the path to the file"
+        help = "The path to the file."
     )
     group.add_argument(
         "--read", "-r",
-        help="read in paths from a txt file.",
+        help="Reads in a txt file containing paths.",
     )
     parser.add_argument(
         "--over", "-o",
         action='store_true',
-        help="overwrites any files with the matching path.",
+        help="Overwrites a registered file with the matching path.",
     )
     parsed_args = parser.parse_args(args)
     paths =  _read_in_txt(parsed_args.read) if parsed_args.read else [parsed_args.file, ]

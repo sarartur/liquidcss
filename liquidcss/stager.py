@@ -7,7 +7,7 @@ from esprima.nodes import Literal, Script
 class Stager(object):
 
     def __init__(self, selector_map):
-        self.store = selector_map
+        self.selector_map = selector_map
 
     def _generate_uuid(self):
         id_ = str(uuid.uuid4())
@@ -17,7 +17,7 @@ class Stager(object):
             return self._generate_uuid()
 
     def _generate_id(self, selector_string: str) -> str:
-        existing = self.store.get(selector_string)
+        existing = self.selector_map.get(selector_string)
         if not existing:
             selector_text = self._generate_uuid()
         else:
@@ -42,7 +42,7 @@ class Stager(object):
             )
             selector.selectorText = new_string
             for matched, replaced in repl.occurrences:
-                self.store[matched] = replaced
+                self.selector_map[matched] = replaced
 
     def _toggle_in_html(self, tags):
         for tag in tags:
@@ -50,7 +50,7 @@ class Stager(object):
             if classes:
                 new_classes = []
                 for class_ in classes:
-                    replacment = self.store.get(f".{class_}")
+                    replacment = self.selector_map.get(f".{class_}")
                     if replacment:
                         replacment = replacment[1:]
                     else:
@@ -60,7 +60,7 @@ class Stager(object):
 
             id_ = tag.get('id')
             if id_:
-                replacment = self.store.get(f"#{id_}")
+                replacment = self.selector_map.get(f"#{id_}")
                 if replacment:
                     replacment = replacment[1:]
                 else:
@@ -69,7 +69,7 @@ class Stager(object):
 
     def _toggle_in_js(self, identifiers):
         for identifier in identifiers:
-            replacement = self.store.get(identifier.value)
+            replacement = self.selector_map.get(identifier.value)
             if replacement:
                 replacement = replacement
             else:

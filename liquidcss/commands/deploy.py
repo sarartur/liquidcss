@@ -2,19 +2,20 @@ import argparse
 import os
 
 from liquidcss.workspace import WorkSpace 
-from liquidcss.settings import Settings
+from liquidcss.settings import Settings, Messages
 
 """
 Command: liquidcss deploy
 
 Description:
-    Deploys staged files.
+    Deploys staged files and reverts deployed files.
 
-Positional Arguments: {file_id}
-    {id} - The id to a staged file.
+Positional Arguments : {id}
+    {id} : The ID to a file.
 
 Optional Arguments:
-    [--all -a] - allows skipping of 'file_key' argument and specifies all files.
+    [--all -a] : Designates all files.
+    [--reverse -r] : Reverts deployed files.
 """
 
 workspace = WorkSpace(base_dir = os.getcwd())
@@ -24,11 +25,9 @@ settings = Settings(workspace = workspace)
 def deploy(file_ids):
     file_map = workspace.file_map.content
     for id_ in file_ids:
-        file_key, file_settings = next((
-            (key, value) for key, value in file_map.items() if value["id"] == id_
-        ), (None, None))
+        file_key, file_settings = workspace.file_map.key_and_settings_from_id(id_ = id_)
         if not file_key:
-            raise Exception("The file with that Id does not exist")
+            raise Exception(Messages.id_not_registered)
         if not settings.reverse:
             if not file_settings['deployed']:
                 workspace.copy(src = file_settings['path'], trgt = os.path.join(workspace.bak.path, file_key))
@@ -36,32 +35,31 @@ def deploy(file_ids):
             file_settings['deployed'] = True
         else:
             if not file_settings['deployed']:
-                raise Exception("File is not deployed")
+                raise Exception(Messages.file_is_not_deployed)
             workspace.copy(src = os.path.join(workspace.bak.path, file_key), trgt = file_settings['path'])
             file_settings['deployed'] = False
-            workspace.remove_files(paths = (os.path.join(workspace.bak.path, file_key), ))
         workspace.file_map.content = file_map
 
 def main(args):
     parser = argparse.ArgumentParser(
         prog="liquid deploy",
-        description="Deploys and undeploysstaged files.",
+        description="Deploys staged files and reverts deployed files.",
     )
     group = parser.add_mutually_exclusive_group(required = True)
     group.add_argument(
         "id",
         nargs = "?",
-        help="Resets the work space. The reset will be blocked if there are files deployed.",
+        help="The ID to a file.",
     )
     group.add_argument(
         "--all", "-a",
         action='store_true',
-        help="Resets the work space. The reset will be blocked if there are files deployed.",
+        help="Designates all files.",
     )
     parser.add_argument(
         "--reverse", '-r',
         action = 'store_true',
-        help = "reverts the currently deployed files"
+        help = "Reverts deployed files."
     )
     parsed_args = parser.parse_args(args)
     settings.register_from_kwargs(**vars(parsed_args))
