@@ -2,11 +2,11 @@ import argparse
 import os
 
 
-from liquidcss.settings import Settings, Messages
+from liquidcss.settings import Settings, Messages, DocConfig
 from liquidcss.workspace import WorkSpace
 from liquidcss.parsers import create_parser
 from liquidcss.stager import Stager
-from liquidcss.utils import create_file_hash
+from liquidcss.utils import create_file_hash, display_output
 
 """
 Command: liquidcss stage
@@ -27,29 +27,32 @@ Flags:
 workspace = WorkSpace(base_dir = os.getcwd())
 settings = Settings(workspace = workspace)
 
-def stage(file_ids):
-    workspace.selector_map.content = None
-    stager = Stager(selector_map = workspace.selector_map.content)
-    file_map = workspace.file_map.content
-    for id_ in sorted(file_ids, key = lambda id_: settings.type_priority.index(next(
-        value['type'] for value in file_map.values() if value["id"] == id_
-    ))):
-        file_key, file_settings = workspace.file_map.key_and_settings_from_id(id_ = id_)
+def stage(ids):
+    to_console = []
+    stager = Stager(selector_map = dict())
+    for id_ in ids:
+        if not workspace.file_map.settings_from_id(id_ = id_, file_settings = DocConfig):
+            return [*to_console, Messages.id_not_registered.format(id = id_)]
+    for id_ in settings.sort_by_priority(ids = ids, file_map = workspace.file_map.content):
+        file_map = workspace.file_map.content
+        doc_config = workspace.file_map.settings_from_id(id_ = id_, file_settings = DocConfig)
         if create_file_hash(
-            path = os.path.join(workspace.src.path, file_key)
-        ) != file_settings['hash']:
-            Exception(Messages.hash_changed)
-        parser = create_parser(type_ = file_settings['type'])
-        document = parser.from_file(path = os.path.join(workspace.src.path, file_key))
+            path = os.path.join(workspace.src.path, doc_config.key)
+        ) != doc_config.hash:
+            return [*to_console, Messages.hash_changed]
+        parser = create_parser(type_ = doc_config.type)
+        document = parser.from_file(path = os.path.join(workspace.src.path, doc_config.key))
         if not settings.no_hash:
             stager.toggle_selector_names(objects = document.selectors)
-        file_map[file_key]['staged'] = True
-        workspace.file_map.content = file_map
+        doc_config.staged = True
+        workspace.file_map.content = {**file_map, **{doc_config.key: doc_config.values}}
         workspace.selector_map.content = stager.selector_map
         workspace.create_file(
-            path = os.path.join(workspace.staged.path, file_key), 
+            path = os.path.join(workspace.staged.path, doc_config.key), 
             string = document.to_string()
         )
+        to_console = [*to_console, Messages.file_staged.format(id = id_)]
+    return to_console
 
 def main(args):
     parser = argparse.ArgumentParser(
@@ -74,11 +77,11 @@ def main(args):
     )
     parsed_args = parser.parse_args(args)
     settings.register_from_kwargs(**vars(parsed_args))
-    file_ids = tuple(
+    ids = tuple(
         dict_['id'] for dict_ in workspace.file_map.content.values()
-    ) if settings.all else tuple(parsed_args.file_id, )
-    stage(file_ids)
-    
+    ) if settings.all else tuple(parsed_args.id, )
+    to_console = stage(ids)
+    display_output(to_console)
         
 
     

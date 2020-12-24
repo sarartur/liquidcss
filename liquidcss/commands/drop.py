@@ -3,6 +3,7 @@ import os
 
 from liquidcss.workspace import WorkSpace
 from liquidcss.settings import Settings, Messages
+from liquidcss.utils import display_output
 
 """
 Command: liquidcss drop
@@ -21,19 +22,23 @@ Optional Arguments:
 workspace = WorkSpace(base_dir = os.getcwd())
 settings = Settings(workspace = workspace)
 
-def drop(file_ids):
+def drop(ids):
+    to_console = []
     file_map = workspace.file_map.content
-    for id_ in file_ids:
-        file_key, file_settings = workspace.file_map.key_and_settings_from_id(id_ = id_)
-        if not settings.hard and file_settings['deployed']:
-            raise Exception(Messages.file_is_deployed)
+    for id_ in ids:
+        doc_config = workspace.file_map.key_and_settings_from_id(id_ = id_)
+        if not settings.hard and doc_config.deployed:
+            return [*to_console, Messages.file_is_deployed]
         workspace.remove_files(paths = (
-            os.path.join(workspace.src.path, file_key),
-            os.path.join(workspace.staged.path, file_key),
-            os.path.join(workspace.bak.path, file_key)
+            os.path.join(workspace.src.path, doc_config.key),
+            os.path.join(workspace.staged.path, doc_config.key),
+            os.path.join(workspace.bak.path, doc_config.key)
         ))
-        del file_map[file_key]
+        del file_map[doc_config.key]
         workspace.file_map.content = file_map
+        to_console.append(Messages.file_dropped.format(id_, doc_config.path))
+    return to_console
+
 
 def main(args):
     parser = argparse.ArgumentParser(
@@ -58,8 +63,10 @@ def main(args):
     )
     parsed_args = parser.parse_args(args)
     settings.register_from_kwargs(**vars(parsed_args))
-    file_ids = tuple(
+    ids = tuple(
         dict_['id'] for dict_ in workspace.file_map.content.values()
     ) if settings.all else tuple(parsed_args.id, )
-    drop(file_ids = file_ids)
+    to_console = drop(ids = ids)
+    display_output(to_console)
+
         

@@ -2,7 +2,8 @@ import argparse
 import os
 
 from liquidcss.workspace import WorkSpace 
-from liquidcss.settings import Settings, Messages
+from liquidcss.settings import Settings, Messages, DocConfig
+from liquidcss.utils import display_output
 
 """
 Command: liquidcss deploy
@@ -23,22 +24,27 @@ settings = Settings(workspace = workspace)
 
 
 def deploy(file_ids):
-    file_map = workspace.file_map.content
+    to_console = []
     for id_ in file_ids:
-        file_key, file_settings = workspace.file_map.key_and_settings_from_id(id_ = id_)
-        if not file_key:
-            raise Exception(Messages.id_not_registered)
+        file_map = workspace.file_map.content
+        doc_config = workspace.file_map.settings_from_id(id_ = id_, file_settings = DocConfig)
+        if not doc_config.key:
+            return [*to_console, Messages.id_not_registered.format(id = id_)]
         if not settings.reverse:
-            if not file_settings['deployed']:
-                workspace.copy(src = file_settings['path'], trgt = os.path.join(workspace.bak.path, file_key))
-            workspace.copy(src = os.path.join(workspace.staged.path, file_key), trgt = file_settings['path'])
-            file_settings['deployed'] = True
+            to_console.append(Messages.file_deployed.format(id = id_, path = doc_config.path))
+            if not doc_config.deployed:
+                workspace.copy(src = doc_config.path, trgt = os.path.join(workspace.bak.path, doc_config.key))
+            workspace.copy(src = os.path.join(workspace.staged.path, doc_config.key), trgt = doc_config.path)
+            doc_config.deployed = True
         else:
-            if not file_settings['deployed']:
-                raise Exception(Messages.file_is_not_deployed)
-            workspace.copy(src = os.path.join(workspace.bak.path, file_key), trgt = file_settings['path'])
-            file_settings['deployed'] = False
-        workspace.file_map.content = file_map
+            if not doc_config.deployed:
+                return [*to_console, Messages.file_is_not_deployed]
+            workspace.copy(src = os.path.join(workspace.bak.path, doc_config.key), trgt = doc_config.path)
+            doc_config.deployed = False
+            to_console.append(Messages.deploy_reversed.format(id = id_, path = doc_config.path))
+        workspace.file_map.content = {**file_map, **{doc_config.key: doc_config.values}}
+    return to_console
+
 
 def main(args):
     parser = argparse.ArgumentParser(
@@ -66,7 +72,8 @@ def main(args):
     file_ids = tuple(
         dict_['id'] for dict_ in workspace.file_map.content.values()
     ) if settings.all else tuple(parsed_args.id, )
-    deploy(file_ids = file_ids)
+    to_console = deploy(file_ids = file_ids)
+    display_output(to_console)
     
         
 

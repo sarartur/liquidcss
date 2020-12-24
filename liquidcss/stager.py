@@ -4,6 +4,7 @@ from cssutils.css import CSSStyleRule
 from bs4.element import Tag
 from esprima.nodes import Literal, Script
 
+
 class Stager(object):
 
     def __init__(self, selector_map):

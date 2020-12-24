@@ -88,13 +88,13 @@ class WorkSpace(Structure):
                 return False
         return True
 
-    def register(self, path, file_key, type_):
+    def register(self, path, key, type_):
         _content = self.file_map.content
-        _content.update({file_key : {
+        _content.update({key : {
             "path": os.path.join(self.base_dir, path), 
             "staged": False, "deployed": False,
             "hash": create_file_hash(
-                path = os.path.join(self.src.path, file_key)
+                path = os.path.join(self.src.path, key)
             ), "type": type_, 'name': os.path.basename(path)
         }})
         self.file_map.content = _content
@@ -177,8 +177,11 @@ class Registration(File):
         for i, value in enumerate(dict_.values()):
             value["id"] = str(i)
 
-    def key_and_settings_from_id(self, id_):
-        file_key, file_settings = next((
-            (key, value) for key, value in self.content.items() if value["id"] == id_
+    def settings_from_id(self, id_, file_settings):
+        key, dict_ = next((
+            ((key, value) for (key, value) in self.content.items() if value["id"] == id_)
         ), (None, None))
-        return file_key, file_settings
+        return None if not key else file_settings(**{
+            'key': key, **dict_
+        })
+

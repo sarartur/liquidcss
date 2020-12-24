@@ -12,6 +12,7 @@ class Settings(object):
         self.type_priority = [
             'css', 'html', 'js'
         ]
+        self.workspace = workspace
 
         #All possible attributes that can registered.
         self.reset = False
@@ -28,6 +29,11 @@ class Settings(object):
             **workspace.settings.content
         )
 
+    def sort_by_priority(self, ids, file_map):
+        return sorted(ids, key = lambda id_: self.type_priority.index(next(
+            value['type'] for value in file_map.values() if value["id"] == id_
+        )))
+
     def register_from_kwargs(self, **kwargs):
         self.__dict__.update(**kwargs)
 
@@ -35,25 +41,29 @@ class Settings(object):
     def extensions(self):
         return {key: value for key, value in  self.__dict__.items() if key.endswith('_ext')}
 
+    def get_type(self, ext):
+        return next(
+            (key.split('_')[0] for key, value in self.extensions.items() if ext in value), None
+        )
+
+class DocConfig(object):
+
+    def __init__(self, **kwargs):
+        self.__dict__.update(**kwargs)
+
+    @property
+    def values(self):
+        return {key: value for (key, value) in self.__dict__.items() if key != 'key'}
+
+
 class Messages(object):
-    workspace_exists = "WorkSpace already exists"
-    files_are_deployed = "Files are deployed. Ids: {}"
-    hard_reset_warning = (
-        "The workspace will be reset even if files are deployed. \n"
-        "If the worksapce is corrupted and you can not revert deployed files, \n"
-        "consider retreiving files from: \n"
-        "\n"
-        "\t{} \n"
-        "\n"
-        "The program will attempt to preserve a copy of the folder. \n"
-        "Would you like to continue? (Y/N)"
-    )
-    succesful_init= "Succesfully created workspace"
-    succesful_reset = "Succesfully reset the workspace"
-    reset_cancled = "Hard reset cancled"
-    workspace_does_not_exist = "No WorkSpace detected"
+    workspace_exists = "\tWorkSpace already exists."
+    files_are_deployed = "\tFiles are deployed. Ids: {}"
+    successfull_init= "\tSuccessfully created workspace."
+    successfull_reset = "\tSuccessfully reset the workspace."
+    no_workspace_found = "\tNo WorkSpace found."
     status = (
-        "\t[File ID: {id}]\n"
+        "\t[ID: {id}]\n"
         "\t  name: {name}\n"
         "\t  path: {path}\n"
         "\t  type: {type}\n"
@@ -61,13 +71,38 @@ class Messages(object):
         "\t  staged: {staged}\n"
         "\t  deployed: {deployed}\n"
     )
-    id_not_registered = "No file with that ID is registered"
-    hash_changed = "The file has been changed after it was registered by the work space."
+    id_not_registered = "\tNo file with ID: {id} is registered."
+    hash_changed = "\tFile has been changed after it was registered."
     path_already_registered = (
-        "\tA file with that path is already registered: \n"
+        "\tFile the path is already registered. \n"
         "\t  {path}"
     )
-    unkown_extension = "File with unknown extension"
-    file_not_found = "File not found at {path}."
-    file_is_deployed = "File is deployed"
-    file_is_not_deployed = "File is not deployed"
+    unknown_extension = "\tFile with unknown extension."
+    file_not_found = "\tFile not found at {path}."
+    file_is_deployed = "\tFile is deployed."
+    file_is_not_deployed = "\tFile is not deployed."
+    file_staged = (
+        "\tFile staged:\n"
+        "\t  ID: {id}"
+    )
+    workspace_created = "\tWorksSpace created."
+    workspace_reset = "\tWorkSpace reset."
+    file_registered = (
+        "\tFile registered to the WorkSpace with the following path:\n"
+        "\t  {path}"
+    )
+    file_dropped = (
+        "\tRemoved the following file from the WorkSpace:\n"
+        "\t  ID: {id}\n"
+        "\t  path: {path}\n"
+    )
+    file_deployed = (
+        "\tDeployed the following file.\n"
+        "\t  ID: {id}\n"
+        "\t  path: {path}\n"
+    )
+    deploy_reversed = (
+        "\tReversed deployment of the following file.\n"
+        "\t  ID: {id}\n"
+        "\t  path: {path}\n"
+    )

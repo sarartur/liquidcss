@@ -83,7 +83,6 @@ class JsParser(Parser):
             if not isinstance(variable_declaration, VariableDeclaration):
                 continue
             for declaration in variable_declaration.declarations:
-                #print(declaration)
                 if not isinstance(declaration, VariableDeclarator):
                     continue
                 identifier = declaration.init

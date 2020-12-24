@@ -3,6 +3,7 @@ import os
 
 from liquidcss.workspace import WorkSpace
 from liquidcss.settings import Settings, Messages
+from liquidcss.utils import display_output
 
 """
 Command: liquidcss init
@@ -19,26 +20,20 @@ workspace = WorkSpace(base_dir = os.getcwd())
 settings = Settings(workspace = workspace)
 
 def init():
-    if not settings.reset:
-        if workspace.base.exists:
-            raise Exception(Messages.workspace_exists)
-        workspace.init()
-        return
-    if not workspace.base.exists:
-        raise Exception(Messages.workspace_does_not_exist)
-    if not settings.hard:
+    to_console = []
+    if settings.reset:
+        if settings.hard:
+            workspace.reset()
+            return [*to_console, Messages.workspace_reset]
         deployed = workspace.files_deployed
         if deployed:
-            raise Exception(Messages.files_are_deployed.format(deployed))
+            return [*to_console, Messages.files_are_deployed.format(deployed)]
         workspace.reset()
-        return
-    else:
-        print(Messages.hard_reset_warning.format(workspace.bak.path))
-        user_input = input().strip().lower().startswith('y')
-        if user_input:
-            workspace.reset()
-            return
-        raise Exception(Messages.reset_cancled)
+        return [*to_console, Messages.workspace_reset]
+    if workspace.base.exists:
+        return [*to_console, Messages.workspace_exists]
+    workspace.init()
+    return [*to_console, Messages.workspace_created]
 
 def main(args):
     parser = argparse.ArgumentParser(
@@ -59,6 +54,7 @@ def main(args):
     if parsed_args.hard and not parsed_args.reset:
         parser.error("[--hard] can not be passed in without [--reset -r]")
     settings.register_from_kwargs(**vars(parsed_args))
-    init()
+    to_console = init()
+    display_output(to_console)
 
     
