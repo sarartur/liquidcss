@@ -22,7 +22,6 @@ Optional Arguments:
 workspace = WorkSpace(base_dir = os.getcwd())
 settings = Settings(workspace = workspace)
 
-
 def deploy(file_ids):
     to_console = []
     for id_ in file_ids:
@@ -44,7 +43,6 @@ def deploy(file_ids):
             to_console.append(Messages.deploy_reversed.format(id = id_, path = doc_config.path))
         workspace.file_map.content = {**file_map, **{doc_config.key: doc_config.values}}
     return to_console
-
 
 def main(args):
     parser = argparse.ArgumentParser(

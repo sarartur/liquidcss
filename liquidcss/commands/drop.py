@@ -39,7 +39,6 @@ def drop(ids):
         to_console.append(Messages.file_dropped.format(id_, doc_config.path))
     return to_console
 
-
 def main(args):
     parser = argparse.ArgumentParser(
         prog="liquid drop",

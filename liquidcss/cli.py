@@ -4,7 +4,6 @@ import sys
 
 import liquidcss.commands as commands
 
-
 def _registered_commands(group):
     registered_commands = pkg_resources.iter_entry_points(group = group)
     return {c.name: c for c in registered_commands}

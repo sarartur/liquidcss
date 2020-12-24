@@ -1,7 +1,6 @@
 class Settings(object):
 
     default = {
-        "worksapce_folder_name": "liq",
         "css_ext": ["css"],
         "js_ext": ["js"],
         "html_ext": ["html"]
@@ -54,7 +53,6 @@ class DocConfig(object):
     @property
     def values(self):
         return {key: value for (key, value) in self.__dict__.items() if key != 'key'}
-
 
 class Messages(object):
     workspace_exists = "\tWorkSpace already exists."

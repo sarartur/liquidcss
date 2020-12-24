@@ -35,7 +35,6 @@ class CssParser(Parser):
     def is_parser_for(cls, type_):
         return type_ == 'css'
 
-
     def parse(self, string: str) -> (list, 'sheet'):
         document = Document(to_string_method = self._doc_to_string_method)
         document.obj = cssutils.parseString(string)
@@ -46,7 +45,6 @@ class CssParser(Parser):
             if isinstance(rule, CSSStyleRule):
                 document.selectors.append(rule)
         return document
-
 
 class HtmlParser(Parser):
 
@@ -62,7 +60,6 @@ class HtmlParser(Parser):
         document.obj = BeautifulSoup(string, 'html.parser')
         document.selectors = document.obj.find_all()
         return document
-
 
 class JsParser(Parser):
 
