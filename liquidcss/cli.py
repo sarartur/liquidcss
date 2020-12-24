@@ -20,6 +20,5 @@ def dispatch(argv: list):
         "args", help = argparse.SUPPRESS, nargs = argparse.REMAINDER,
     )
     args = parser.parse_args(argv)
-
     main = registered_commands[args.command].load()
     return main(args = args.args)
