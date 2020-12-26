@@ -56,10 +56,11 @@ class DocConfig(object):
 
 class Messages(object):
     workspace_exists = "\tWorkSpace already exists."
-    files_are_deployed = "\tFiles are deployed. Ids: {}"
-    successfull_init= "\tSuccessfully created workspace."
-    successfull_reset = "\tSuccessfully reset the workspace."
-    no_workspace_found = "\tNo WorkSpace found."
+    files_are_deployed = ("\tFiles are deployed.\n"
+                          "\t  Ids: {}")
+    successfull_init= "\tWorkSpace created/"
+    successfull_reset = "\tWorkSpace reset."
+    no_workspace_found = "\tWorkSpace not found."
     status = (
         "\t[ID: {id}]\n"
         "\t  name: {name}\n"
@@ -69,8 +70,11 @@ class Messages(object):
         "\t  staged: {staged}\n"
         "\t  deployed: {deployed}\n"
     )
-    id_not_registered = "\tNo file with ID: {id} is registered."
-    hash_changed = "\tFile has been changed after it was registered."
+    id_not_registered = (
+        "\tFile not registered.\n"
+        "\t  ID: {id}"
+    )
+    hash_changed = "\tFile was changed after it was registered."
     path_already_registered = (
         "\tFile the path is already registered. \n"
         "\t  {path}"
@@ -86,21 +90,21 @@ class Messages(object):
     workspace_created = "\tWorksSpace created."
     workspace_reset = "\tWorkSpace reset."
     file_registered = (
-        "\tFile registered to the WorkSpace with the following path:\n"
+        "\tFile registered to WorkSpace.\n"
         "\t  {path}"
     )
     file_dropped = (
-        "\tRemoved the following file from the WorkSpace:\n"
+        "\tRemoved file from WorkSpace:\n"
         "\t  ID: {id}\n"
         "\t  path: {path}\n"
     )
     file_deployed = (
-        "\tDeployed the following file.\n"
+        "\tDeployed file.\n"
         "\t  ID: {id}\n"
         "\t  path: {path}\n"
     )
     deploy_reversed = (
-        "\tReversed deployment of the following file.\n"
+        "\tReversed deployment of file.\n"
         "\t  ID: {id}\n"
         "\t  path: {path}\n"
     )
