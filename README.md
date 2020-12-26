@@ -8,30 +8,30 @@ achieve their objective by hooking onto certain HTML selector names in the respo
 Install the package with: ```pip install liquidcss``` \
 https://pypi.org/project/liquidcss/
 ### Usage
-To begin using the tool first create a WorkSpace. \
-<p style="text-align: center;">```liquid init```</p> \
-Register files to the WorkSpace either individually or by specifying a ```txt``` document containing a list of paths. \
+To begin using the tool first create a WorkSpace: ```liquid init``` \
+Register files to the WorkSpace either individually or by specifying a ```txt``` document containing a list of paths: \
 ```liquid grab /path/to/file``` or ```liquid grab -r paths.txt```
-Once files are registered, view their status inside the WorkSpace.
-```liquid status -a```
+Once files are registered, view their status inside the WorkSpace:```liquid status -a```
 ```
 [ID: 0]
     name: sample001.css
-    path: /Users/simon2/Desktop/AntiScraper/code/example/original/sample001.css
+    path: /example/original/sample001.css
     type: css
     hash: 603706f3aa0a9b7779fca2acd29d4b8e5a68796f846f955c6ac6e72b6f13081a
     staged: True
     deployed: False
 
 ```
-Hash the selector names across all registered files.
-```liquid stage -a```
+Hash the selector names across all registered files: ```liquid stage -a```
+
+
 **The selector names will be hashed only if they are present in the CSS files registered in the workspace.**
 The files are now ready to be deployed. The deploy command will swap the files at the registered paths with the hashed files and create
-a backup of the original files.
-```liquid deploy -a```
-Reverse the deployment of the files with hashed selectors and replace them with files stored in backup.
-```liquid deploy -a -r```
+a backup of the original files.:```liquid deploy -a```
+
+
+Reverse the deployment of the files with hashed selectors and replace them with files stored in backup: ```liquid deploy -a -r```
+
 
 **JavaScript files registered with the WorkSpace can only contain ```const``` or ```var``` key words and only the selector names as strings include the ```.``` or the ```#```.** See the examples in the example folder.
 
