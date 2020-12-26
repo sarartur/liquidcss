@@ -2,14 +2,14 @@
 Command line tool for hashing selectors across CSS, HTML and JavaScript files.
 ### Description & Implementation
 The tool makes most scraping robots obsolete by dynamically hashing all selectors across the entire infrastructure of a web application. Most scraping tools 
-achieve their objective by hooking onto certain HTML selector names in the response document. LiquidSel offers up a way to counter act this approach by changing the selector names without breaking any of the functionality or appearance of the web application. \
+achieve their objective by hooking onto certain HTML selector names in the response document. LiquidSel offers up a way to counter act this approach by changing the selector names without breaking any of the functionality or appearance of the web application. 
 
 
 Install the package with: ```pip install liquidcss``` \
 https://pypi.org/project/liquidcss/
 ### Usage
 To begin using the tool first create a WorkSpace. \
-```liquid init``` \
+<p style="text-align: center;">```liquid init```</p> \
 Register files to the WorkSpace either individually or by specifying a ```txt``` document containing a list of paths. \
 ```liquid grab /path/to/file``` or ```liquid grab -r paths.txt```
 Once files are registered, view their status inside the WorkSpace.
@@ -31,7 +31,7 @@ The files are now ready to be deployed. The deploy command will swap the files a
 a backup of the original files.
 ```liquid deploy -a```
 Reverse the deployment of the files with hashed selectors and replace them with files stored in backup.
-```liquid deploy -a -r```\
+```liquid deploy -a -r```
 
 **JavaScript files registered with the WorkSpace can only contain ```const``` or ```var``` key words and only the selector names as strings include the ```.``` or the ```#```.** See the examples in the example folder.
 
