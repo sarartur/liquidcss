@@ -4,13 +4,11 @@ from cssutils.css import CSSStyleRule
 from bs4.element import Tag
 from esprima.nodes import Literal, Script
 
-from liquidcss.re_utils import Replacement
 
+class Stager(object):
 
-class SelectorManager(object):
-
-    def __init__(self):
-        self.store = dict()
+    def __init__(self, selector_map):
+        self.selector_map = selector_map
 
     def _generate_uuid(self):
         id_ = str(uuid.uuid4())
@@ -20,7 +18,7 @@ class SelectorManager(object):
             return self._generate_uuid()
 
     def _generate_id(self, selector_string: str) -> str:
-        existing = self.store.get(selector_string)
+        existing = self.selector_map.get(selector_string)
         if not existing:
             selector_text = self._generate_uuid()
         else:
@@ -45,7 +43,7 @@ class SelectorManager(object):
             )
             selector.selectorText = new_string
             for matched, replaced in repl.occurrences:
-                self.store[matched] = replaced
+                self.selector_map[matched] = replaced
 
     def _toggle_in_html(self, tags):
         for tag in tags:
@@ -53,7 +51,7 @@ class SelectorManager(object):
             if classes:
                 new_classes = []
                 for class_ in classes:
-                    replacment = self.store.get(f".{class_}")
+                    replacment = self.selector_map.get(f".{class_}")
                     if replacment:
                         replacment = replacment[1:]
                     else:
@@ -63,7 +61,7 @@ class SelectorManager(object):
 
             id_ = tag.get('id')
             if id_:
-                replacment = self.store.get(f"#{id_}")
+                replacment = self.selector_map.get(f"#{id_}")
                 if replacment:
                     replacment = replacment[1:]
                 else:
@@ -72,9 +70,24 @@ class SelectorManager(object):
 
     def _toggle_in_js(self, identifiers):
         for identifier in identifiers:
-            replacement = self.store.get(identifier.value)
+            replacement = self.selector_map.get(identifier.value)
             if replacement:
                 replacement = replacement
             else:
                 replacement = identifier.value 
             identifier.value = replacement
+
+class Replacement(object):
+
+    def __init__(self, replacement: str, manager):
+        self.replacement = replacement
+        self.manager = manager
+        self.occurrences = []
+
+    def __call__(self, match: re.Match):
+        matched = match.group(0)
+        replaced = match.expand(
+            self.replacement
+        ).format(self.manager._generate_id(matched))
+        self.occurrences.append((matched, replaced))
+        return replaced

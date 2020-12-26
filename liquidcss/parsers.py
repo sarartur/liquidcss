@@ -11,8 +11,6 @@ from esprima.nodes import (
     Literal,
 )
 
-
-
 class Parser(object):
 
     def from_file(self, path: str):
@@ -28,58 +26,80 @@ class Parser(object):
         """
         pass
 
-
 class CssParser(Parser):
 
     def __init__(self):
-        pass
+        self._doc_to_string_method = lambda document: document.obj.cssText.decode('utf-8')
+
+    @classmethod
+    def is_parser_for(cls, type_):
+        return type_ == 'css'
 
     def parse(self, string: str) -> (list, 'sheet'):
-        css_rules = []
-        sheet = cssutils.parseString(string)
-        for rule in sheet:
+        document = Document(to_string_method = self._doc_to_string_method)
+        document.obj = cssutils.parseString(string)
+        for rule in document.obj:
             if isinstance(rule, CSSMediaRule):
                 rules = rule.cssRules
-                css_rules = [*css_rules, *rules]
+                document.selectors = [*document.selectors, *rules]
             if isinstance(rule, CSSStyleRule):
-                css_rules.append(rule)
-        return css_rules, sheet
-
+                document.selectors.append(rule)
+        return document
 
 class HtmlParser(Parser):
 
     def __init__(self):
-        pass
+        self._doc_to_string_method = lambda document: str(document.obj)
+
+    @classmethod
+    def is_parser_for(cls, type_):
+        return type_ == 'html'
 
     def parse(self, string: str) -> BeautifulSoup:
-        soup = BeautifulSoup(string, 'html.parser')
-        tags = soup.find_all()
-        return tags, soup
-
+        document = Document(to_string_method = self._doc_to_string_method)
+        document.obj = BeautifulSoup(string, 'html.parser')
+        document.selectors = document.obj.find_all()
+        return document
 
 class JsParser(Parser):
 
     def __init__(self):
-        pass
+        self._doc_to_string_method = lambda document, : document.obj.format(
+            *[selector.value for selector in document.selectors]
+        )
+
+    @classmethod
+    def is_parser_for(cls, type_):
+        return type_ == 'js'
 
     def parse(self, string):
+        document = Document(to_string_method = self._doc_to_string_method)
+        document.obj = """"""
         script = parseScript(string)
-        identifiers = []
-        string_body = """"""
         for variable_declaration in script.body:
             if not isinstance(variable_declaration, VariableDeclaration):
                 continue
             for declaration in variable_declaration.declarations:
-                #print(declaration)
                 if not isinstance(declaration, VariableDeclarator):
                     continue
                 identifier = declaration.init
                 if not isinstance(identifier, Literal):
                     continue
-                identifiers.append(identifier)
-                string_body += f"{variable_declaration.kind} {declaration.id.name} = " + "\"{}\"\n"
-        return identifiers, string_body
+                document.selectors.append(identifier)
+                document.obj += f"{variable_declaration.kind} {declaration.id.name} = " + "\"{}\"\n"
+        return document
 
+class Document(object):
 
+    def __init__(self, to_string_method):
+        self._to_string_method = to_string_method
+        self.obj = None
+        self.selectors = []
 
+    def to_string(self):
+        return self._to_string_method(self)
 
+def create_parser(type_):
+    for cls in Parser.__subclasses__():
+        if cls.is_parser_for(type_):
+            return cls()

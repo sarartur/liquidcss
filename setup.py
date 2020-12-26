@@ -5,7 +5,11 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="liquidcss", 
+<<<<<<< HEAD
     version="0.3.3",
+=======
+    version="1.0.1",
+>>>>>>> dev
     author="Artur Saradzhyan",
     author_email="saradzhyanartur@gmail.com",
     description="Alters css selector names across css files and html templates.",
@@ -13,6 +17,19 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/sarartur/liquidcss",
     packages=setuptools.find_packages(),
+    entry_points = {
+        'console_scripts': [
+            'liquid = liquidcss.__main__:main',                  
+        ], 
+        'liquidcss.registered_commands': [
+            'grab = liquidcss.commands.grab:main',
+            'init = liquidcss.commands.init:main',
+            'deploy = liquidcss.commands.deploy:main',
+            'stage = liquidcss.commands.stage:main',
+            'drop = liquidcss.commands.drop:main',
+            'status = liquidcss.commands.status:main'
+        ]         
+    },
     install_requires=['cssutils==1.0.2', 'bs4==0.0.1', "esprima==4.0.1"],
     setup_requires=['cssutils==1.0.2', 'bs4==0.0.1', "esprima==4.0.1"],
     classifiers=[

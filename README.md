@@ -1,28 +1,38 @@
 # LiquidCSS
-Python package for altering CSS selector names across multiple files.
+Command line tool for hashing selectors across CSS, HTML and JavaScript files.
 ### Description & Implementation
-The package offers up a way to counteract targeted scraping by changing all CSS selector names across multiple files to unique identifiers. \
-\
+The tool makes most scraping robots obsolete by dynamically hashing all selectors across the entire infrastructure of a web application. Most scraping tools 
+achieve their objective by hooking onto certain HTML selector names in the response document. LiquidSel offers up a way to counter act this approach by changing the selector names without breaking any of the functionality or appearance of the web application. \
+
+
 Install the package with: ```pip install liquidcss``` \
 https://pypi.org/project/liquidcss/
 ### Usage
-Create a python file of any name and place it in your working directory. For the sake of this example we will call the file ```liquify.py```. The ```liquidcss``` package offers one main function ```rename_selectors```. The function takes in a list of paths to the CSS files, a list of paths to the HTML files and a list of paths to JavaScript files. \
-
-The JavaScript file must containe exclusively ```var``` and ```const``` declarations and the selector prefix (either ```.``` or ```#```). Please refer to the **example** folder for demonstration. The idea is to export all selector names to their own files and assign them to variables.
- 
-Contents of ```liquify.py``` file.
-``` python
-import liquidcss
-
-liquidcss.rename_selectors(
-    css_files = ['example/original/css/sample001.css', ],
-    html_files = ['example/original/html/sample001.html', ],
-    js_files = ['example/original/js/sample001.js', ],
-)
+To begin using the tool first create a WorkSpace. \
+```liquid init``` \
+Register files to the WorkSpace either individually or by specifying a ```txt``` document containing a list of paths. \
+```liquid grab /path/to/file``` or ```liquid grab -r paths.txt```
+Once files are registered, view their status inside the WorkSpace.
+```liquid status -a```
 ```
- 
-Execute the file with ```python liquify.py```
- 
-The function will create a directory structure with the base folder ```liquidcss_``` inside the directory where the ```liquify.py``` file is located. Inside the directory structure the function will place copies of the specified CSS JavaScript and HTML files with substituted selector names. The ```mapping.json``` file will include all substitution relationships.
+[ID: 0]
+    name: sample001.css
+    path: /Users/simon2/Desktop/AntiScraper/code/example/original/sample001.css
+    type: css
+    hash: 603706f3aa0a9b7779fca2acd29d4b8e5a68796f846f955c6ac6e72b6f13081a
+    staged: True
+    deployed: False
 
-**Important**: The resulting folder structure maybe different from the original one, so HTML files' references to JavaScript and CSS files may be broken in the process.
+```
+Hash the selector names across all registered files.
+```liquid stage -a```
+**The selector names will be hashed only if they are present in the CSS files registered in the workspace.**
+The files are now ready to be deployed. The deploy command will swap the files at the registered paths with the hashed files and create
+a backup of the original files.
+```liquid deploy -a```
+Reverse the deployment of the files with hashed selectors and replace them with files stored in backup.
+```liquid deploy -a -r```\
+
+**JavaScript files registered with the WorkSpace can only contain ```const``` or ```var``` key words and only the selector names as strings include the ```.``` or the ```#```.** See the examples in the example folder.
+
+More extensive documentation and further features are in development.
