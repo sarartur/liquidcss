@@ -1,8 +1,8 @@
 # LiquidCSS
-Command line tool for hashing selectors across CSS, HTML and JavaScript files.
+Command line tool for hashing selector names across CSS, HTML and JavaScript files.
 ### Description & Implementation
 The tool makes most scraping robots obsolete by dynamically hashing all selectors across the entire infrastructure of a web application. Most scraping tools 
-achieve their objective by hooking onto certain HTML selector names in the response document. LiquidSel offers up a way to counter act this approach by changing the selector names without breaking any of the functionality or appearance of the web application. 
+achieve their objective by hooking onto certain HTML selector names in the response document. LiquidCSS offers up a way to counter act this approach by changing the selector names without breaking any of the functionality or appearance of the web application. 
 
 
 Install the package with: ```pip install liquidcss``` \
@@ -27,7 +27,7 @@ Hash the selector names across all registered files: ```liquid stage -a```
 
 **The selector names will be hashed only if they are present in the CSS files registered in the workspace.**
 The files are now ready to be deployed. The deploy command will swap the files at the registered paths with the hashed files and create
-a backup of the original files.:```liquid deploy -a```
+a backup of the original files:```liquid deploy -a```
 
 
 Reverse the deployment of the files with hashed selectors and replace them with files stored in backup: ```liquid deploy -a -r```
